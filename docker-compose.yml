@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  socket-programing:
+    build:             #buildから実施
+        context: .
+    ports:             #-p ポートフォワーディング
+      #- '8080:8080' # TCPは動的に転送ポートが開くので定義不要。
+      - '12345:12345/udp' # この行がないと外部からudp通信不可。
+    volumes:           #-v hostディレクトリ(./socket-programing)をコンテナディレクトリ(/workspace)にマウント
+      - ./socket-programing:/workspace/socket-programing
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/workspace/socket-programing/target
+    tty: true          #-t ttyを割り当てます。
+    stdin_open: true   #-i STDINを開きます。
+    command: /bin/sh -c "cargo watch -x run"
+
+volumes:
+  cargo-cache:
+  target-cache:
